@@ -207,6 +207,8 @@ const handleCommand = async (chatId, command, username) => {
 
 				if (user) {
 					user.referrals.push({ username, id: chatId });
+
+					await user.save();
 				}
 
 				return await sendMessage(
