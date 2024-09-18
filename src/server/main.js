@@ -48,14 +48,9 @@ const userSchema = new mongoose.Schema({
 		default: []
 	},
 	referrals: {
-		type: [String],
-		default: []
-	},
-	referralLink: {
-		type: String
-	},
-	photoUrl: {
-		type: String
+		type: [{ username: String, id: String }],
+		default: [],
+		id: false
 	},
 	firstTimer: {
 		type: Boolean,
@@ -164,7 +159,7 @@ const sendMessage = async (chatId, text, keyboard = null) => {
 };
 
 // Handle bot commands
-const handleCommand = async (chatId, command) => {
+const handleCommand = async (chatId, command, username) => {
 	switch (command) {
 		case "/start":
 			await sendMessage(
@@ -206,6 +201,30 @@ const handleCommand = async (chatId, command) => {
 			break;
 
 		default:
+			if (/.*[\d]+$/.test(command)) {
+				const [referrerId] = command.match(/.*[\d]+$/);
+				const user = await User.findOne({ chatId: referrerId });
+
+				if (user) {
+					user.referrals.push({ username, id: chatId });
+				}
+
+				return await sendMessage(
+					chatId,
+					`👋 Welcome to the $Emerald Miner Bot! 🚀\n\nThis bot allows you to mine and earn $Emerald directly from Telegram.\n\n- Start mining $Emerald! ⛏️\n- Track your progress in real-time.\n- Earn bonuses for referrals and tasks.`,
+					[
+						[
+							{
+								text: "Start Mining",
+								web_app: {
+									url: `${APP_LIVE_URL}/?chatId=${chatId}`
+								}
+							}
+						]
+					]
+				);
+			}
+
 			await sendMessage(
 				chatId,
 				`**Welcome to $Emerald Miner Bot!**\n\nAvailable commands:\n- /start: Start the bot.\n- /mine: Start mining.\n- /balance: Check balance.`
@@ -317,7 +336,7 @@ app.post("/telegram-webhook", async (req, res) => {
 		if (isBot || ["channel", "group", "supergroup"].includes(chatType)) {
 			await sendMessage(chatId, "Only user accounts may use this bot.");
 		} else {
-			await handleCommand(chatId, message.text.toLowerCase());
+			await handleCommand(chatId, message.text.toLowerCase(), username);
 			await saveUser({ name: { firstName, lastName }, username, chatId });
 		}
 	}

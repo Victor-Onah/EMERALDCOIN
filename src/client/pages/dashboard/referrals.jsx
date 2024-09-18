@@ -1,17 +1,21 @@
 import { BiX } from "react-icons/bi";
 import emerald from "../../lib/emerald-image-base64-string";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { BsPeopleFill } from "react-icons/bs";
+import { AppCtx } from "./layout";
+import { PiUserFill } from "react-icons/pi";
 
 const ReferralsPage = () => {
 	const [doShare, setDoShare] = useState(false);
 	const [navbarHeight, setNavbarHeight] = useState(63);
-	const FRIENDS = [];
+	const { chatId, referrals } = useContext(AppCtx);
 
 	const copyLink = async () => {
 		try {
-			await navigator.clipboard.writeText("");
+			await navigator.clipboard.writeText(
+				`https://t.me/emeraldcoin_miner_bot?start=${chatId}`
+			);
 			toast.success("Link copied successfully!");
 		} catch {
 			toast.error("Failed to copy link!");
@@ -55,7 +59,7 @@ const ReferralsPage = () => {
 
 	return (
 		<main className="flex flex-col gap-4 text-black z-[9999] relative flex-1 overflow-x-hidden pt-8">
-			{FRIENDS.length === 0 ? (
+			{referrals.length === 0 ? (
 				<div className="flex flex-col flex-1 w-full items-center justify-around p-4 gap-4">
 					<h1 className="text-xl text-center font-bold text-green-500">
 						Invite friends to get more $Emeralds
@@ -94,22 +98,24 @@ const ReferralsPage = () => {
 							<BsPeopleFill className="text-2xl w-fit" />
 							<span className="w-[2px] h-8 bg-green-300 inline-block"></span>
 							<span className="flex flex-1 gap-1 font-bold text-lg">
-								10 Friends
+								{referrals.length} Friend
+								{referrals.length > 1 && "s"}
 							</span>
 						</h2>
 						<div className="space-y-2">
-							{Array(9)
-								.fill()
-								.map((_, i) => (
-									<div
-										key={i}
-										className="flex items-center gap-4">
-										<div className="h-10 w-10 rounded-full bg-green-300"></div>
-										<div className="flex-1">
-											Lorem, ipsum dolor.
-										</div>
+							{referrals.map((friend, i) => (
+								<div
+									key={friend.id}
+									className="flex items-center gap-4">
+									<div className="p-2 text-lg rounded-full bg-green-500">
+										<PiUserFill />
 									</div>
-								))}
+									<div className="flex-1">
+										{friend.username}
+									</div>
+									<div className="flex-1">{friend.id}</div>
+								</div>
+							))}
 						</div>
 					</div>
 				</div>
