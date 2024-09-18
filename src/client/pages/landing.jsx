@@ -3,7 +3,15 @@ import { useEffect, useState } from "react";
 import emerald from "../lib/emerald-image-base64-string";
 
 const LandingPage = () => {
-	const chatId = new URLSearchParams(window.location.search).get("chatId");
+	const chatId =
+		new URLSearchParams(window.location.search).get("chatId") ||
+		JSON.parse(
+			decodeURIComponent(
+				new URLSearchParams(
+					decodeURIComponent(window.location.hash.substring(1))
+				).get("user")
+			)
+		)["chatId"];
 	const LAUNCH_DATE = new Date("Fri, 15 Nov 2024 11:00:00 GMT");
 	const HEADING_TEXT = " Take Part In An Exclusive Airdrop. ";
 	const [remainingTime, setRemainingTime] = useState(
