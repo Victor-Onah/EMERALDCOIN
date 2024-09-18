@@ -202,7 +202,7 @@ const handleCommand = async (chatId, command, username) => {
 
 		default:
 			if (/.*[\d]+$/.test(command)) {
-				const [referrerId] = command.match(/.*[\d]+$/);
+				const [referrerId] = command.match(/[\d]+$/);
 				const user = await User.findOne({ chatId: referrerId });
 
 				if (user) {
