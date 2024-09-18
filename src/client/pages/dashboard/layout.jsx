@@ -55,7 +55,7 @@ export const AppCtx = createContext(null);
 const DashboardLayout = () => {
 	const { pathname } = useLocation();
 	const [state, dispatch] = useReducer(reducer, defaultState);
-	const [appLoadState, setAppLoadState] = useState("done");
+	const [appLoadState, setAppLoadState] = useState("loading");
 
 	const fetchUserData = async () => {
 		setAppLoadState("loading");
