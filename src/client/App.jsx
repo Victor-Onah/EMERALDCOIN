@@ -20,7 +20,7 @@ const App = () => {
 
 	return (
 		<BrowserRouter>
-			<Toaster duration={3000} richColors position="bottom-center" />
+			<Toaster duration={3000} richColors position="top-center" />
 			<Routes>
 				<Route index element={<LandingPage />} />
 				<Route path="/dashboard" element={<DashboardLayout />}>

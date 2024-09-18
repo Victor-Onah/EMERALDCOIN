@@ -15,45 +15,8 @@ body {
 	font-size: 14px;
 }
 
-.animate-ring {
-	animation: ring 2s cubic-bezier(0.075, 0.82, 0.165, 1) 0s infinite;
-}
-
 .animate-float {
 	animation: float 2s cubic-bezier(0.075, 0.82, 0.165, 1) 0s infinite;
-}
-
-@keyframes ring {
-	0% {
-		transform: rotate(45deg) scaleX(95%);
-	}
-	2.5% {
-		transform: rotate(0deg) scaleX(1);
-	}
-	5% {
-		transform: scaleX(95%) rotate(-45deg);
-	}
-	7.5% {
-		transform: scaleY(80%) translateY(-5px) rotate(45deg) scaleX(95%);
-	}
-	10% {
-		transform: scaleY(80%) translateY(-5px) rotate(-45deg) scaleX(95%);
-	}
-	12.5% {
-		transform: rotate(45deg) scaleX(95%);
-	}
-	15% {
-		transform: rotate(0deg) scaleX(1);
-	}
-	17.5% {
-		transform: scaleX(95%) rotate(-45deg);
-	}
-	20% {
-		transform: scaleY(80%) translateY(-5px) rotate(45deg) scaleX(95%);
-	}
-	25% {
-		transform: scaleY(1) translateY(0) rotate(0) scaleX(1);
-	}
 }
 
 @keyframes float {

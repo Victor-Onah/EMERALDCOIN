@@ -78,7 +78,7 @@ const Dashboard = () => {
 			</section>
 			<section className="p-4 z-50 rounded-t-3xl flex-1 bg-gradient-to-b from-green-600 to-green-900 flex flex-col gap-8 justify-between text-white">
 				<h2 className="flex gap-4 items-center">
-					<BiStopwatch className="animate-ring font-bold text-2xl w-fit" />
+					<BiStopwatch className="font-bold text-2xl w-fit" />
 					<span className="w-[2px] h-8 bg-green-300 inline-block"></span>
 					<div className="flex flex-1 gap-1 font-bold z-50">
 						{["days", "hours", "minutes", "seconds"].map(

@@ -75,7 +75,7 @@ const LandingPage = () => {
 						}`}></span>
 				</h1>
 				<div
-					className={`flex justify-center items-center gap-1 font-bold z-50 transition-opacity duration-500 ${
+					className={`flex justify-center gap-1 font-bold z-50 transition-opacity duration-500 ${
 						doneTyping ? "opacity-100" : "opacity-0"
 					}`}>
 					{["days", "hours", "minutes", "seconds"].map((unit, i) => (
@@ -90,7 +90,7 @@ const LandingPage = () => {
 									{unit}
 								</div>
 							</div>
-							{i < 3 && <span className="pt-[3px]">:</span>}
+							{i < 3 && <span className="pt-[5px]">:</span>}
 						</>
 					))}
 				</div>

@@ -56,6 +56,10 @@ const userSchema = new mongoose.Schema({
 	},
 	photoUrl: {
 		type: String
+	},
+	firstTimer: {
+		type: Boolean,
+		default: true
 	}
 });
 
@@ -116,8 +120,8 @@ const startNewMiningSession = async chatId => {
 // Save new user
 const saveUser = async userInfo => {
 	try {
-		const userExists = await User.findOne({ chatId: userInfo.chatId });
-		if (userExists) return;
+		const user = await User.findOne({ chatId: userInfo.chatId });
+		if (user) return;
 
 		await new User(userInfo).save();
 	} catch (error) {
@@ -165,7 +169,7 @@ const handleCommand = async (chatId, command) => {
 		case "/start":
 			await sendMessage(
 				chatId,
-				`👋 Welcome to the $Emerald Miner Bot! 🚀\n\nThis bot allows you to mine and earn $Emerald from Telegram.\n\n- Start mining $Emerald! ⛏️\n- Track your progress in real-time.\n- Earn bonuses for referrals and tasks.`,
+				`👋 Welcome to the $Emerald Miner Bot! 🚀\n\nThis bot allows you to mine and earn $Emerald directly from Telegram.\n\n- Start mining $Emerald! ⛏️\n- Track your progress in real-time.\n- Earn bonuses for referrals and tasks.`,
 				[
 					[
 						{
@@ -195,7 +199,9 @@ const handleCommand = async (chatId, command) => {
 			const balance = await computeBalance({ chatId });
 			await sendMessage(
 				chatId,
-				`**Account Summary**\n\nBalance: ${balance} $EMD\nTimestamp: ${new Date().toUTCString()}`
+				`**Account Summary**\n\nBalance: ${balance.toFixed(
+					2
+				)} $EMD\nTimestamp: ${new Date().toUTCString()}`
 			);
 			break;
 
@@ -247,8 +253,9 @@ app.use(
 
 // API routes
 app.post("/api/user/new-mining-session", async (req, res) => {
-	await startNewMiningSession(req.body.chatId);
-	res.sendStatus(201);
+	(await startNewMiningSession(req.body.chatId))
+		? res.sendStatus(201)
+		: res.sendStatus(503);
 });
 
 app.get("/api/user/:chatId", async (req, res) => {
@@ -268,8 +275,26 @@ app.get("/api/user/:chatId", async (req, res) => {
 	}
 });
 
+app.put("/api/user/:chatId/update", async (req, res) => {
+	try {
+		const { chatId } = req.params;
+		const user = await User.findOne({ chatId });
+		const { updates } = req.body;
+
+		for (let update in updates) {
+			user[update] = updates[update];
+		}
+
+		await user.save();
+
+		res.sendStatus(201);
+	} catch (error) {
+		res.sendStatus(500);
+	}
+});
+
 // Ping endpoint to keep server active
-app.get("/ping", (req, res) => res.send("pong"));
+app.get("/ping", (req, res) => res.sendStatus(200));
 
 // Telegram webhook
 app.post("/telegram-webhook", async (req, res) => {
