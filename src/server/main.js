@@ -252,8 +252,8 @@ app.use(
 );
 
 // API routes
-app.post("/api/user/new-mining-session", async (req, res) => {
-	(await startNewMiningSession(req.body.chatId))
+app.put("/api/user/:chatId/new-mining-session", async (req, res) => {
+	(await startNewMiningSession(req.params.chatId))
 		? res.sendStatus(201)
 		: res.sendStatus(503);
 });

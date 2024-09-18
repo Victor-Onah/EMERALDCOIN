@@ -15,6 +15,8 @@ const reducer = (state, action) => {
 			return { ...state, balance: state.balance + action.payload };
 		case "set_mining":
 			return { ...state, isMining: action.payload };
+		case "set_chat_id":
+			return { ...state, chatId: action.payload };
 		default:
 			return state;
 	}
@@ -47,9 +49,11 @@ const defaultState = {
 	// 		endTime: 1726599812779
 	// 	}
 	// ],
-	// balance: 1.23232355667774,
-	// isMining: false
+	// balance: 0.0,
+	// isMining: false,
+	// firstTimer: false
 };
+
 export const AppCtx = createContext(null);
 
 const DashboardLayout = () => {
@@ -66,6 +70,9 @@ const DashboardLayout = () => {
 				const chatId = new URLSearchParams(window.location.search).get(
 					"chatId"
 				);
+
+				dispatch({ type: "set_chat_id", payload: chatId });
+
 				const response = await fetch(`/api/user/${chatId}`);
 				if (!response.ok) throw new Error("Failed to fetch user data");
 
@@ -165,17 +172,32 @@ const DashboardLayout = () => {
 						</div>
 					</header>
 
-					<div className="flex-1 flex max-h-full overflow-x-hidden z-0">
+					<div
+						style={{
+							zIndex:
+								(state.firstTimer && state.isMining) ||
+								state.firstTimer
+									? 50
+									: 0
+						}}
+						className="flex-1 flex max-h-full overflow-x-hidden">
 						<AppCtx.Provider value={{ state, dispatch }}>
 							<Outlet />
 						</AppCtx.Provider>
 					</div>
 
 					<footer
+						style={{
+							zIndex:
+								(state.firstTimer && state.isMining) ||
+								state.firstTimer
+									? 0
+									: 50
+						}}
 						id="nav-bar"
 						aria-roledescription="Navigation footer"
 						role="navigation"
-						className="flex justify-between p-2 bg-green-700 text-white text-center border-t border-green-500 items-center z-50 sticky bottom-0">
+						className="flex justify-between p-2 bg-green-700 text-white text-center border-t border-green-500 items-center sticky bottom-0">
 						{navLinks.map(({ to, label, icon, key }) => (
 							<Link
 								to={to}
