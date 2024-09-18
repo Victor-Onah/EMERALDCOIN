@@ -264,11 +264,14 @@ app.get("/api/user/:chatId", async (req, res) => {
 		const user = await User.findOne({ chatId });
 		const lastMiningSession =
 			user.miningTimelines[user.miningTimelines.length - 1];
+
 		res.json({
 			...user.toObject(),
 			balance: await computeBalance({ chatId, user }),
 			timestamp: Date.now(),
-			isMining: Date.now() < lastMiningSession.endTime
+			isMining: lastMiningSession
+				? Date.now() < lastMiningSession.endTime
+				: false
 		});
 	} catch (error) {
 		res.sendStatus(500);
