@@ -9,7 +9,9 @@ import { PiUserFill } from "react-icons/pi";
 const ReferralsPage = () => {
 	const [doShare, setDoShare] = useState(false);
 	const [navbarHeight, setNavbarHeight] = useState(63);
-	const { chatId, referrals } = useContext(AppCtx);
+	const {
+		state: { chatId, referrals }
+	} = useContext(AppCtx);
 
 	const copyLink = async () => {
 		try {
