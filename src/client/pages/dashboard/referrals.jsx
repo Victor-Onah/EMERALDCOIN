@@ -95,7 +95,7 @@ const ReferralsPage = () => {
 							onClick={() => setDoShare(false)}></div>
 					)}
 					{shareActions}
-					<div className="w-full p-4 rounded-t-3xl flex-1 bg-gradient-to-b from-green-600 to-green-900 flex flex-col gap-8 justify-between text-white">
+					<div className="w-full p-4 rounded-t-3xl flex-1 bg-gradient-to-b from-green-600 to-green-900 flex flex-col gap-8 text-white">
 						<h2 className="flex gap-4 items-center">
 							<BsPeopleFill className="text-2xl w-fit" />
 							<span className="w-[2px] h-8 bg-green-300 inline-block"></span>
@@ -115,7 +115,6 @@ const ReferralsPage = () => {
 									<div className="flex-1">
 										{friend.username}
 									</div>
-									<div className="flex-1">{friend.id}</div>
 								</div>
 							))}
 						</div>

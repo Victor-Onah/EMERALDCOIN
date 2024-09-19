@@ -201,14 +201,21 @@ const handleCommand = async (chatId, command, username) => {
 			break;
 
 		default:
+			// Handle referrals
 			if (/.*[\d]+$/.test(command)) {
 				const [referrerId] = command.match(/[\d]+$/);
 				const user = await User.findOne({ chatId: referrerId });
 
-				if (user) {
-					user.referrals.push({ username, id: chatId });
+				if (user && referrerId !== chatId) {
+					const existingReferral = user.referrals.find(
+						referral => referral.id === chatId
+					);
 
-					await user.save();
+					if (!existingReferral) {
+						user.referrals.push({ id: chatId, username });
+
+						await user.save();
+					}
 				}
 
 				return await sendMessage(
