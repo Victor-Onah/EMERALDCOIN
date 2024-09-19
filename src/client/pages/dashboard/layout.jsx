@@ -68,6 +68,7 @@ const DashboardLayout = () => {
 		if (Telegram && Telegram.WebApp) {
 			try {
 				const chatId =
+					localStorage.getItem("chatId") ||
 					new URLSearchParams(window.location.search).get("chatId") ||
 					JSON.parse(
 						new URLSearchParams(
@@ -80,6 +81,8 @@ const DashboardLayout = () => {
 							).get("tgWebAppData")
 						).get("user")
 					)["id"];
+
+				if (chatId) localStorage.setItem("chatId");
 
 				dispatch({ type: "set_chat_id", payload: chatId });
 
