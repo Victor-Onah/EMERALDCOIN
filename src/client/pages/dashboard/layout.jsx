@@ -82,7 +82,7 @@ const DashboardLayout = () => {
 						).get("user")
 					)["id"];
 
-				if (chatId) localStorage.setItem("chatId");
+				if (chatId) localStorage.setItem("chatId", chatId);
 
 				dispatch({ type: "set_chat_id", payload: chatId });
 

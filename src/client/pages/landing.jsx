@@ -16,7 +16,7 @@ const LandingPage = () => {
 			).get("user")
 		)["id"];
 
-	if (chatId) localStorage.setItem("chatId");
+	if (chatId) localStorage.setItem("chatId", chatId);
 
 	const LAUNCH_DATE = new Date("Fri, 15 Nov 2024 11:00:00 GMT");
 	const HEADING_TEXT = " Take Part In An Exclusive Airdrop. ";
