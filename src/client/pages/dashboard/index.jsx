@@ -12,7 +12,6 @@ const Dashboard = () => {
 
 	const { balance, isMining, firstTimer, chatId } = state;
 	const MINING_RATE_PER_HOUR = 100_000;
-	const INITIAL_BALANCE = balance;
 	const MINING_DEADLINE = new Date("Fri, 15 Nov 2024 11:00:00 GMT");
 	const [showTutorial, setShowTutorial] = useState(true);
 
@@ -25,11 +24,6 @@ const Dashboard = () => {
 	}, []);
 
 	const startNewMiningSession = async () => {
-		dispatch({
-			type: "set_mining",
-			payload: true
-		});
-
 		try {
 			const [miningSessionResponse, userDataUpdateResponse] =
 				await Promise.all([
@@ -53,16 +47,14 @@ const Dashboard = () => {
 
 			if (miningSessionResponse.status === 503) {
 				toast.error("Failed to sync mining session with server.");
-				dispatch({
-					type: "set_mining",
-					payload: false,
-					balance: INITIAL_BALANCE
-				});
 			} else {
 				toast.success("New mining session started successfully!");
 				dispatch({
 					type: "set_mining",
-					payload: true
+					payload: {
+						...state,
+						mining: true
+					}
 				});
 			}
 
@@ -277,6 +269,7 @@ const Dashboard = () => {
 					<ReactConfetti
 						height={window.innerHeight}
 						width={window.innerWidth}
+						gravity={0.3}
 					/>
 				</div>
 			)}
