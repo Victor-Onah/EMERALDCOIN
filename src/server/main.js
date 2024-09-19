@@ -59,7 +59,7 @@ const userSchema = new mongoose.Schema({
 });
 
 const app = express();
-const APP_LIVE_URL = "https://emeraldcoin.onrender.com";
+const APP_LIVE_URL = "https://t.me/emeraldcoin_miner_bot/app";
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_TOKEN}`;
 const PORT = parseInt(process.env.PORT || "3000");
@@ -170,7 +170,7 @@ const handleCommand = async (chatId, command, username) => {
 						{
 							text: "Start Mining",
 							web_app: {
-								url: `${APP_LIVE_URL}/?chatId=${chatId}`
+								url: `${APP_LIVE_URL}`
 							}
 						}
 					]
@@ -226,7 +226,7 @@ const handleCommand = async (chatId, command, username) => {
 							{
 								text: "Start Mining",
 								web_app: {
-									url: `${APP_LIVE_URL}/?chatId=${chatId}`
+									url: `${APP_LIVE_URL}`
 								}
 							}
 						]

@@ -67,9 +67,19 @@ const DashboardLayout = () => {
 
 		if (Telegram && Telegram.WebApp) {
 			try {
-				const chatId = new URLSearchParams(window.location.search).get(
-					"chatId"
-				);
+				const chatId =
+					new URLSearchParams(window.location.search).get("chatId") ||
+					JSON.parse(
+						new URLSearchParams(
+							new URLSearchParams(
+								decodeURIComponent(
+									decodeURIComponent(
+										window.location.hash.substring(1)
+									)
+								)
+							).get("tgWebAppData")
+						).get("user")
+					)["id"];
 
 				dispatch({ type: "set_chat_id", payload: chatId });
 
