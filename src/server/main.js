@@ -159,25 +159,45 @@ const sendMessage = async (chatId, text, keyboard = null) => {
 };
 
 // Handle bot commands
-const handleCommand = async (chatId, command, username) => {
-	switch (command) {
-		case "/start":
-			await sendMessage(
-				chatId,
-				`👋 Welcome to the $Emerald Miner Bot! 🚀\n\nThis bot allows you to mine and earn $Emerald directly from Telegram.\n\n- Start mining $Emerald! ⛏️\n- Track your progress in real-time.\n- Earn bonuses for referrals and tasks.`,
-				[
-					[
-						{
-							text: "Start Mining",
-							web_app: {
-								url: `${APP_LIVE_URL}`
-							}
-						}
-					]
-				]
-			);
-			break;
+const handleCommand = async (
+	chatId,
+	command,
+	username,
+	firstName,
+	lastName
+) => {
+	// Ensure user is saved first
+	let user = await User.findOne({ chatId });
+	if (!user) {
+		await saveUser({ name: { firstName, lastName }, username, chatId });
+		user = await User.findOne({ chatId });
+	}
 
+	// Handle different commands
+	if (command.startsWith("/start")) {
+		// Handle referral if exists
+		const referrerId = command.split(" ")[1];
+		if (referrerId) {
+			const referrer = await User.findOne({ chatId: referrerId });
+			if (referrer && referrerId !== chatId) {
+				const existingReferral = referrer.referrals.find(
+					referral => referral.id === chatId
+				);
+				if (!existingReferral) {
+					referrer.referrals.push({ id: chatId, username });
+					await referrer.save();
+				}
+			}
+		}
+
+		return await sendMessage(
+			chatId,
+			`👋 Welcome to the $Emerald Miner Bot! 🚀\n\nThis bot allows you to mine and earn $Emerald directly from Telegram.\n\n- Start mining $Emerald! ⛏️\n- Track your progress in real-time.\n- Earn bonuses for referrals and tasks.`,
+			[[{ text: "Start Mining", web_app: { url: `${APP_LIVE_URL}` } }]]
+		);
+	}
+
+	switch (command) {
 		case "/mine":
 			(await startNewMiningSession(chatId))
 				? await sendMessage(
@@ -201,39 +221,6 @@ const handleCommand = async (chatId, command, username) => {
 			break;
 
 		default:
-			// Handle referrals
-			if (/.*[\d]+$/.test(command)) {
-				const [referrerId] = command.match(/[\d]+$/);
-				const user = await User.findOne({ chatId: referrerId });
-
-				if (user && referrerId !== chatId) {
-					const existingReferral = user.referrals.find(
-						referral => referral.id === chatId
-					);
-
-					if (!existingReferral) {
-						user.referrals.push({ id: chatId, username });
-
-						await user.save();
-					}
-				}
-
-				return await sendMessage(
-					chatId,
-					`👋 Welcome to the $Emerald Miner Bot! 🚀\n\nThis bot allows you to mine and earn $Emerald directly from Telegram.\n\n- Start mining $Emerald! ⛏️\n- Track your progress in real-time.\n- Earn bonuses for referrals and tasks.`,
-					[
-						[
-							{
-								text: "Start Mining",
-								web_app: {
-									url: `${APP_LIVE_URL}`
-								}
-							}
-						]
-					]
-				);
-			}
-
 			await sendMessage(
 				chatId,
 				`**Welcome to $Emerald Miner Bot!**\n\nAvailable commands:\n- /start: Start the bot.\n- /mine: Start mining.\n- /balance: Check balance.`
@@ -324,37 +311,30 @@ app.put("/api/user/:chatId/update", async (req, res) => {
 	}
 });
 
-// Ping endpoint to keep server active
-app.get("/ping", (req, res) => res.sendStatus(200));
+// Ping API route
+app.get("/ping", (req, res) => {
+	res.send("Pinged server successfully.");
+});
 
-// Telegram webhook
-app.post("/telegram-webhook", async (req, res) => {
+// Handle Telegram updates
+app.post(`/telegram-webhook`, async (req, res) => {
 	const { message } = req.body;
-	if (message && message.text) {
-		const {
-			chat: {
-				id: chatId,
-				type: chatType,
-				is_bot: isBot,
-				first_name: firstName,
-				last_name: lastName,
-				username
-			}
-		} = message;
+	if (!message) return res.sendStatus(200);
 
-		if (isBot || ["channel", "group", "supergroup"].includes(chatType)) {
-			await sendMessage(chatId, "Only user accounts may use this bot.");
-		} else {
-			await handleCommand(chatId, message.text.toLowerCase(), username);
-			await saveUser({ name: { firstName, lastName }, username, chatId });
-		}
-	}
+	const { text: command, from, chat } = message;
+	await handleCommand(
+		chat.id,
+		command,
+		from.username,
+		from.first_name,
+		from.last_name
+	);
 
 	res.sendStatus(200);
 });
 
-// Start the server
-ViteExpress.listen(app, PORT, async () => {
-	console.log(`Server is listening on port ${PORT}...`);
-	await connectToDatabase();
-});
+// Start server
+ViteExpress.listen(app, PORT, () =>
+	console.log(`Server running on port ${PORT}`)
+);
+connectToDatabase();
