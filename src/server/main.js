@@ -48,7 +48,7 @@ const userSchema = new mongoose.Schema({
 		default: []
 	},
 	referrals: {
-		type: [{ username: String, id: String }],
+		type: [{ username: String, chatId: String }],
 		default: [],
 		id: false
 	},
@@ -59,7 +59,7 @@ const userSchema = new mongoose.Schema({
 });
 
 const app = express();
-const APP_LIVE_URL = "https://t.me/emeraldcoin_miner_bot/app";
+const APP_LIVE_URL = "https://emeraldcoin.onrender.com";
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_TOKEN}`;
 const PORT = parseInt(process.env.PORT || "3000");
@@ -159,45 +159,25 @@ const sendMessage = async (chatId, text, keyboard = null) => {
 };
 
 // Handle bot commands
-const handleCommand = async (
-	chatId,
-	command,
-	username,
-	firstName,
-	lastName
-) => {
-	// Ensure user is saved first
-	let user = await User.findOne({ chatId });
-	if (!user) {
-		await saveUser({ name: { firstName, lastName }, username, chatId });
-		user = await User.findOne({ chatId });
-	}
-
-	// Handle different commands
-	if (command.startsWith("/start")) {
-		// Handle referral if exists
-		const referrerId = command.split(" ")[1];
-		if (referrerId) {
-			const referrer = await User.findOne({ chatId: referrerId });
-			if (referrer && referrerId !== chatId) {
-				const existingReferral = referrer.referrals.find(
-					referral => referral.id === chatId
-				);
-				if (!existingReferral) {
-					referrer.referrals.push({ id: chatId, username });
-					await referrer.save();
-				}
-			}
-		}
-
-		return await sendMessage(
-			chatId,
-			`👋 Welcome to the $Emerald Miner Bot! 🚀\n\nThis bot allows you to mine and earn $Emerald directly from Telegram.\n\n- Start mining $Emerald! ⛏️\n- Track your progress in real-time.\n- Earn bonuses for referrals and tasks.`,
-			[[{ text: "Start Mining", web_app: { url: `${APP_LIVE_URL}` } }]]
-		);
-	}
-
+const handleCommand = async (chatId, command, username) => {
 	switch (command) {
+		case "/start":
+			await sendMessage(
+				chatId,
+				`👋 Welcome to the $Emerald Miner Bot! 🚀\n\nThis bot allows you to mine and earn $Emerald directly from Telegram.\n\n- Start mining $Emerald! ⛏️\n- Track your progress in real-time.\n- Earn bonuses for referrals and tasks.`,
+				[
+					[
+						{
+							text: "Start Mining",
+							web_app: {
+								url: `${APP_LIVE_URL}/?chatId=${chatId}`
+							}
+						}
+					]
+				]
+			);
+			break;
+
 		case "/mine":
 			(await startNewMiningSession(chatId))
 				? await sendMessage(
@@ -221,6 +201,39 @@ const handleCommand = async (
 			break;
 
 		default:
+			// Handle referrals
+			if (/.*[\d]+$/.test(command)) {
+				const [referrerId] = command.match(/[\d]+$/);
+				const referrer = await User.findOne({ chatId: referrerId });
+
+				if (referrer && referrer.chatId !== chatId) {
+					const existingReferral = referrer.referrals.find(
+						referral => referral.chatId === chatId
+					);
+
+					if (!existingReferral) {
+						referrer.referrals.push({ chatId, username });
+
+						await referrer.save();
+					}
+				}
+
+				return await sendMessage(
+					chatId,
+					`👋 Welcome to the $Emerald Miner Bot! 🚀\n\nThis bot allows you to mine and earn $Emerald directly from Telegram.\n\n- Start mining $Emerald! ⛏️\n- Track your progress in real-time.\n- Earn bonuses for referrals and tasks.`,
+					[
+						[
+							{
+								text: "Start Mining",
+								web_app: {
+									url: `${APP_LIVE_URL}/?chatId=${chatId}`
+								}
+							}
+						]
+					]
+				);
+			}
+
 			await sendMessage(
 				chatId,
 				`**Welcome to $Emerald Miner Bot!**\n\nAvailable commands:\n- /start: Start the bot.\n- /mine: Start mining.\n- /balance: Check balance.`
@@ -311,30 +324,37 @@ app.put("/api/user/:chatId/update", async (req, res) => {
 	}
 });
 
-// Ping API route
-app.get("/ping", (req, res) => {
-	res.send("Pinged server successfully.");
-});
+// Ping endpoint to keep server active
+app.get("/ping", (req, res) => res.sendStatus(200));
 
-// Handle Telegram updates
-app.post(`/telegram-webhook`, async (req, res) => {
+// Telegram webhook
+app.post("/telegram-webhook", async (req, res) => {
 	const { message } = req.body;
-	if (!message) return res.sendStatus(200);
+	if (message && message.text) {
+		const {
+			chat: {
+				id: chatId,
+				type: chatType,
+				is_bot: isBot,
+				first_name: firstName,
+				last_name: lastName,
+				username
+			}
+		} = message;
 
-	const { text: command, from, chat } = message;
-	await handleCommand(
-		chat.id,
-		command,
-		from.username,
-		from.first_name,
-		from.last_name
-	);
+		if (isBot || ["channel", "group", "supergroup"].includes(chatType)) {
+			await sendMessage(chatId, "Only user accounts may use this bot.");
+		} else {
+			await handleCommand(chatId, message.text.toLowerCase(), username);
+			await saveUser({ name: { firstName, lastName }, username, chatId });
+		}
+	}
 
 	res.sendStatus(200);
 });
 
-// Start server
-ViteExpress.listen(app, PORT, () =>
-	console.log(`Server running on port ${PORT}`)
-);
-connectToDatabase();
+// Start the server
+ViteExpress.listen(app, PORT, async () => {
+	console.log(`Server is listening on port ${PORT}...`);
+	await connectToDatabase();
+});
