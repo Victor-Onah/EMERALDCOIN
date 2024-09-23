@@ -9,17 +9,14 @@ import treasureChest from "../../lib/emerald-chest-image-base64-string";
 
 const Dashboard = () => {
 	const { state, dispatch } = useContext(AppCtx);
-
-	const { balance, isMining, firstTimer, chatId } = state;
-	const MINING_RATE_PER_HOUR = 100_000;
+	const { balance, isMining, firstTimer, telegramId } = state.user;
+	const MINING_RATE_PER_HOUR = 36_000;
 	const INITIAL_BALANCE = balance;
 	const MINING_DEADLINE = new Date("Fri, 15 Nov 2024 11:00:00 GMT");
 	const [showTutorial, setShowTutorial] = useState(true);
-
 	const [remainingTime, setRemainingTime] = useState(
 		MINING_DEADLINE - Date.now()
 	);
-
 	const updateRemainingTime = useCallback(() => {
 		setRemainingTime(MINING_DEADLINE - Date.now());
 	}, []);
@@ -31,46 +28,17 @@ const Dashboard = () => {
 		});
 
 		try {
-			const [miningSessionResponse, userDataUpdateResponse] =
-				await Promise.all([
-					fetch(`/api/user/${chatId}/new-mining-session`, {
-						method: "PUT"
-					}),
-					firstTimer
-						? fetch(`/api/user/${chatId}/update`, {
-								method: "PUT",
-								body: JSON.stringify({
-									updates: {
-										firstTimer: false
-									}
-								}),
-								headers: {
-									"Content-Type": "application/json"
-								}
-						  })
-						: Promise.resolve({})
-				]);
+			await fetch(`/api/user/${telegramId}/new-mining-session`, {
+				method: "PUT"
+			});
 
-			if (miningSessionResponse.status === 503) {
-				toast.error("Failed to sync mining session with server.");
-				dispatch({
-					type: "set_mining",
-					payload: false,
-					balance: INITIAL_BALANCE
-				});
-			} else {
-				toast.success("New mining session started successfully!");
-				dispatch({
-					type: "set_mining",
-					payload: true
-				});
-			}
-
-			if (userDataUpdateResponse.status === 500) {
-				toast.error("Failed to sync update with server.");
-			}
+			toast.success("New mining session started successfully!");
+			dispatch({
+				type: "set_mining",
+				payload: true
+			});
 		} catch (error) {
-			toast.error("Failed to sync updates with server.");
+			toast.error("Failed to sync update with server.");
 		}
 	};
 
@@ -83,9 +51,7 @@ const Dashboard = () => {
 	const updateBalance = useCallback(() => {
 		if (isMining) {
 			const id = crypto.randomUUID();
-			const template = `<span id='${id}' class="absolute font-bold animate-float bottom-0 z-50">+${(
-				MINING_RATE_PER_HOUR / 3_600
-			).toFixed(2)} $EMD</span>`;
+			const template = `<span id='${id}' class="absolute font-bold animate-float bottom-0 z-50">+${10} $EMD</span>`;
 			const coinContainer = document.getElementById("coin-container");
 
 			if (coinContainer) {
@@ -95,18 +61,13 @@ const Dashboard = () => {
 					if (addedPoint) addedPoint.remove();
 				}, 3000);
 			}
-
-			dispatch({
-				type: "set_balance",
-				payload: MINING_RATE_PER_HOUR / 3_600
-			});
 		}
 	}, [isMining]);
 
 	useEffect(() => {
-		const pointAdditionAnimationInterval = setInterval(updateBalance, 1000);
+		const animationInterval = setInterval(updateBalance, 1000);
 
-		return () => clearInterval(pointAdditionAnimationInterval);
+		return () => clearInterval(animationInterval);
 	}, [updateBalance]);
 
 	// Convert remaining time to days, hours, minutes, and seconds
@@ -121,9 +82,7 @@ const Dashboard = () => {
 		<>
 			<main className="flex flex-col gap-4 text-black z-[9999] relative flex-1">
 				<section className="py-4 text-center text-green-500">
-					<span className="text-xl font-bold">
-						{Number(balance.toFixed(2)).toLocaleString()} $EMD
-					</span>
+					<span className="text-xl font-bold">{balance} $EMD</span>
 					<span className="flex items-center justify-center gap-1 font-semibold">
 						<GiMiner />
 						{MINING_RATE_PER_HOUR.toLocaleString()} $EMD/Hr
@@ -256,11 +215,8 @@ const Dashboard = () => {
 								<button
 									onClick={async () => {
 										dispatch({
-											type: "set_state",
-											payload: {
-												...state,
-												firstTimer: false
-											}
+											type: "set_first_timer",
+											payload: false
 										});
 									}}
 									className="block text-green-500 p-2 rounded-lg bg-white font-semibold w-full active:scale-95 transition-transform">

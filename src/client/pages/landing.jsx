@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import emerald from "../lib/emerald-image-base64-string";
 
 const LandingPage = () => {
-	const chatId =
-		localStorage.getItem("chatId") ||
-		new URLSearchParams(window.location.search).get("chatId") ||
+	const id =
+		"1234567890" ||
+		localStorage.getItem("id") ||
+		new URLSearchParams(window.location.search).get("id") ||
 		JSON.parse(
 			new URLSearchParams(
 				new URLSearchParams(
@@ -16,7 +17,7 @@ const LandingPage = () => {
 			).get("user")
 		)["id"];
 
-	if (chatId) localStorage.setItem("chatId", chatId);
+	if (id) localStorage.setItem("id", id);
 
 	const LAUNCH_DATE = new Date("Fri, 15 Nov 2024 11:00:00 GMT");
 	const HEADING_TEXT = " Take Part In An Exclusive Airdrop. ";
@@ -114,7 +115,7 @@ const LandingPage = () => {
 							? "translate-y-0 opacity-100"
 							: "translate-y-full opacity-0"
 					}`}
-					to={`/dashboard?chatId=${chatId}`}>
+					to={`/dashboard?id=${id}`}>
 					GET STARTED
 				</Link>
 			</div>

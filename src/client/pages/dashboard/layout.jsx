@@ -2,56 +2,53 @@ import { createContext, useEffect, useReducer, useState } from "react";
 import { BiHome } from "react-icons/bi";
 import { BsPeople } from "react-icons/bs";
 import { GrTasks } from "react-icons/gr";
-import { MdLeaderboard } from "react-icons/md";
 import emerald from "../../lib/emerald-image-base64-string";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { CgSpinner } from "react-icons/cg";
+import { RiProfileFill } from "react-icons/ri";
 
 const reducer = (state, action) => {
 	switch (action.type) {
 		case "set_state":
-			return { ...state, ...action.payload };
+			return { ...state, user: action.payload };
 		case "set_balance":
-			return { ...state, balance: state.balance + action.payload };
+			return {
+				...state,
+				user: {
+					...state.user,
+					balance: state.user.balance + action.payload
+				}
+			};
 		case "set_mining":
-			return { ...state, isMining: action.payload };
+			return {
+				...state,
+				user: { ...state.user, isMining: action.payload }
+			};
+		case "set_first_timer":
+			return {
+				...state,
+				user: { ...state.user, firstTimer: action.payload }
+			};
 		case "set_chat_id":
-			return { ...state, chatId: action.payload };
+			return { ...state, id: action.payload };
+		case "set_friends":
+			return { ...state, friends: action.payload };
 		default:
 			return state;
 	}
 };
 
 const defaultState = {
-	// name: {
-	// 	firstName: "Chukwuka",
-	// 	lastName: "Onah"
-	// },
-	// username: "onahvictor74",
-	// chatId: "5573365715",
-	// tasksCompleted: [],
-	// referrals: [],
-	// miningTimelines: [
-	// 	{
-	// 		startTime: 1726495220052,
-	// 		endTime: 1726516820052
-	// 	},
-	// 	{
-	// 		startTime: 1726529335969,
-	// 		endTime: 1726550935969
-	// 	},
-	// 	{
-	// 		startTime: 1726553146254,
-	// 		endTime: 1726574746254
-	// 	},
-	// 	{
-	// 		startTime: 1726578212779,
-	// 		endTime: 1726599812779
-	// 	}
-	// ],
-	// balance: 0.0,
-	// isMining: false,
-	// firstTimer: false
+	user: {
+		// _id: "66ef0f5bf15791f959fab9a3",
+		// telegramId: "1234567890",
+		// referredBy: "5GGaPLGdGf",
+		// balance: 0,
+		// totalReferrals: 1,
+		// dateJoined: "2024-09-21T18:22:43.768Z",
+		// referralCode: "bycDgiRiMW"
+		// __v: 0
+	}
 };
 
 export const AppCtx = createContext(null);
@@ -59,7 +56,22 @@ export const AppCtx = createContext(null);
 const DashboardLayout = () => {
 	const { pathname } = useLocation();
 	const [state, dispatch] = useReducer(reducer, defaultState);
-	const [appLoadState, setAppLoadState] = useState("loading");
+	const [appLoadState, setAppLoadState] = useState("done");
+
+	useEffect(() => {
+		let miningInterval;
+
+		if (state.user && state.user.isMining) {
+			miningInterval = setInterval(() => {
+				dispatch({
+					type: "set_balance",
+					payload: 10
+				});
+			}, 1000);
+		}
+
+		return () => clearInterval(miningInterval);
+	}, [state.user.isMining]);
 
 	const fetchUserData = async () => {
 		setAppLoadState("loading");
@@ -67,9 +79,9 @@ const DashboardLayout = () => {
 
 		if (Telegram && Telegram.WebApp) {
 			try {
-				const chatId =
-					localStorage.getItem("chatId") ||
-					new URLSearchParams(window.location.search).get("chatId") ||
+				const id =
+					localStorage.getItem("id") ||
+					new URLSearchParams(window.location.search).get("id") ||
 					JSON.parse(
 						new URLSearchParams(
 							new URLSearchParams(
@@ -82,14 +94,16 @@ const DashboardLayout = () => {
 						).get("user")
 					)["id"];
 
-				if (chatId) localStorage.setItem("chatId", chatId);
+				if (id) localStorage.setItem("id", id);
 
-				dispatch({ type: "set_chat_id", payload: chatId });
+				dispatch({ type: "set_chat_id", payload: id });
 
-				const response = await fetch(`/api/user/${chatId}`);
+				const response = await fetch(`/api/user/${id}`);
+
 				if (!response.ok) throw new Error("Failed to fetch user data");
 
 				const userData = await response.json();
+
 				dispatch({ type: "set_state", payload: userData });
 				setAppLoadState("done");
 			} catch (error) {
@@ -120,10 +134,10 @@ const DashboardLayout = () => {
 			key: "friends"
 		},
 		{
-			to: "/dashboard/leader-board",
-			label: "Leader Board",
-			icon: <MdLeaderboard />,
-			key: "leaderboard"
+			to: "/dashboard/profile",
+			label: "Profile",
+			icon: <RiProfileFill />,
+			key: "profile"
 		}
 	];
 
@@ -200,13 +214,6 @@ const DashboardLayout = () => {
 					</div>
 
 					<footer
-						style={{
-							zIndex:
-								(state.firstTimer && state.isMining) ||
-								state.firstTimer
-									? 0
-									: 50
-						}}
 						id="nav-bar"
 						aria-roledescription="Navigation footer"
 						role="navigation"
