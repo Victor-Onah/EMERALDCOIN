@@ -4,8 +4,6 @@ import emerald from "../lib/emerald-image-base64-string";
 
 const LandingPage = () => {
 	const id =
-		"1234567890" ||
-		localStorage.getItem("id") ||
 		new URLSearchParams(window.location.search).get("id") ||
 		JSON.parse(
 			new URLSearchParams(
@@ -15,7 +13,8 @@ const LandingPage = () => {
 					)
 				).get("tgWebAppData")
 			).get("user")
-		)["id"];
+		)["id"] ||
+		localStorage.getItem("id");
 
 	if (id) localStorage.setItem("id", id);
 

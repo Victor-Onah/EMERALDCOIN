@@ -80,7 +80,6 @@ const DashboardLayout = () => {
 		if (Telegram && Telegram.WebApp) {
 			try {
 				const id =
-					localStorage.getItem("id") ||
 					new URLSearchParams(window.location.search).get("id") ||
 					JSON.parse(
 						new URLSearchParams(
@@ -92,7 +91,8 @@ const DashboardLayout = () => {
 								)
 							).get("tgWebAppData")
 						).get("user")
-					)["id"];
+					)["id"] ||
+					localStorage.getItem("id");
 
 				if (id) localStorage.setItem("id", id);
 
