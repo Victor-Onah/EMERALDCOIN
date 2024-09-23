@@ -102,7 +102,7 @@ export default class UserController {
 							telegramId: id,
 							lastName: last_name,
 							firstName: first_name,
-							referredBy: referrerCode
+							username
 						});
 
 						(await MiningController.startNewMiningSession(id))
