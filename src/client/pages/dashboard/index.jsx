@@ -39,6 +39,8 @@ const Dashboard = () => {
 			});
 		} catch (error) {
 			toast.error("Failed to sync update with server.");
+			dispatch({ type: "set_mining", payload: false });
+			dispatch({ type: "set_balance", payload: INITIAL_BALANCE });
 		}
 	};
 

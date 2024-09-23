@@ -81,6 +81,7 @@ const DashboardLayout = () => {
 			try {
 				const id =
 					new URLSearchParams(window.location.search).get("id") ||
+					localStorage.getItem("id") ||
 					JSON.parse(
 						new URLSearchParams(
 							new URLSearchParams(
@@ -91,8 +92,7 @@ const DashboardLayout = () => {
 								)
 							).get("tgWebAppData")
 						).get("user")
-					)["id"] ||
-					localStorage.getItem("id");
+					)["id"];
 
 				if (id) localStorage.setItem("id", id);
 

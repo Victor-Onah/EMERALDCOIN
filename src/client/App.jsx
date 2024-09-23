@@ -4,7 +4,7 @@ import DashboardLayout from "./pages/dashboard/layout";
 import Dashboard from "./pages/dashboard";
 import ReferralsPage from "./pages/dashboard/referrals";
 import { Toaster } from "sonner";
-import LeaderBoardPage from "./pages/dashboard/leader-board";
+import ProfilePage from "./pages/dashboard/profile";
 import { useEffect } from "react";
 import "./App.css";
 
@@ -30,8 +30,8 @@ const App = () => {
 						element={<ReferralsPage />}
 					/>
 					<Route
-						path="/dashboard/leader-board"
-						element={<LeaderBoardPage />}
+						path="/dashboard/profile"
+						element={<ProfilePage />}
 					/>
 				</Route>
 			</Routes>
