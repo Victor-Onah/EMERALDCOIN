@@ -163,8 +163,7 @@ export default class UserController {
 		}
 
 		await fetch(
-			`https://api.telegram.org/bot${(TELEGRAM_BOT_TOKEN =
-				"7347315925:AAHczKxtSCoLch8JCbIRV7Xc0amtXNRE4Ic")}/sendMessage`,
+			`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
 			{
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
