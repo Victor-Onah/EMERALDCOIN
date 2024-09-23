@@ -88,7 +88,7 @@ export default class UserController {
 							{
 								text: "Start Mining",
 								web_app: {
-									url: `https://emeraldcoin-airdrop.onrender.com/?id=${id}`
+									url: `https://emeraldcoin.onrender.com/?id=${id}`
 								}
 							}
 						]
