@@ -6,7 +6,7 @@ import MiningController from "./mining-controller.js";
 
 config();
 
-const { BOT_TOKEN } = process.env;
+const { TELEGRAM_BOT_TOKEN } = process.env;
 
 export default class UserController {
 	// Handler for fetching user
@@ -162,11 +162,15 @@ export default class UserController {
 			body.reply_markup = { inline_keyboard: keyboard };
 		}
 
-		await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(body)
-		});
+		await fetch(
+			`https://api.telegram.org/bot${(TELEGRAM_BOT_TOKEN =
+				"7347315925:AAHczKxtSCoLch8JCbIRV7Xc0amtXNRE4Ic")}/sendMessage`,
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(body)
+			}
+		);
 	}
 
 	// compute user balance
