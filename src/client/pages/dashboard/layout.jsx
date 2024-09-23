@@ -56,7 +56,7 @@ export const AppCtx = createContext(null);
 const DashboardLayout = () => {
 	const { pathname } = useLocation();
 	const [state, dispatch] = useReducer(reducer, defaultState);
-	const [appLoadState, setAppLoadState] = useState("done");
+	const [appLoadState, setAppLoadState] = useState("loading");
 
 	useEffect(() => {
 		let miningInterval;
@@ -111,7 +111,7 @@ const DashboardLayout = () => {
 				setAppLoadState("failed");
 			}
 		} else {
-			setAppLoadState("failed");
+			// setAppLoadState("failed");
 		}
 	};
 

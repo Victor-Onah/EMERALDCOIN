@@ -51,19 +51,19 @@ const ReferralsPage = () => {
 
 	const ShareActions = () => (
 		<div
-			className={`fixed bg-green-500 w-full transition-transform z-50 ${
+			className={`fixed bg-green-600 w-full transition-transform z-50 ${
 				doShare ? "" : "translate-y-full"
 			}`}
 			style={{ bottom: navbarHeight }}>
 			<div className="relative px-4 py-12 flex flex-col gap-4">
 				<button
 					onClick={copyLink}
-					className="p-2 bg-white text-green-500 rounded-md active:scale-95 transition-transform">
+					className="p-2 bg-white rounded-md active:scale-95 transition-transform">
 					Copy link
 				</button>
 				<button
 					onClick={shareLink}
-					className="p-2 bg-white text-green-500 rounded-md active:scale-95 transition-transform">
+					className="p-2 bg-white rounded-md active:scale-95 transition-transform">
 					Share link
 				</button>
 				<button
@@ -76,16 +76,16 @@ const ReferralsPage = () => {
 	);
 
 	return (
-		<main className="flex flex-col gap-4 text-black z-[9999] relative flex-1 overflow-x-hidden pt-8">
+		<main className="flex flex-col gap-4 text-zinc-700 z-[9999] relative flex-1 overflow-x-hidden pt-8">
 			{totalReferrals > 0 ? (
 				<div className="flex flex-col flex-1 w-full items-center justify-center gap-12">
 					<div className="flex flex-col gap-3 justify-center items-center">
-						<h1 className="text-xl text-center font-bold text-green-500 px-4">
+						<h1 className="text-xl text-center font-bold text-green-600 px-4">
 							Invite more friends to earn more $Emerald
 						</h1>
 						<button
 							onClick={() => setDoShare(true)}
-							className="p-2 bg-green-500 text-white rounded-md active:scale-95 transition-transform">
+							className="p-2 bg-green-600 text-white rounded-md active:scale-95 transition-transform">
 							Invite more friends
 						</button>
 					</div>
@@ -120,8 +120,8 @@ const ReferralsPage = () => {
 				</div>
 			) : (
 				<div className="flex flex-col flex-1 w-full items-center justify-around p-4 gap-4">
-					<div className="text-center text-green-500 space-y-3">
-						<h1 className="text-xl font-bold">
+					<div className="text-center space-y-3">
+						<h1 className="text-xl font-bold text-green-600">
 							Invite friends to earn $Emerald
 						</h1>
 						<p>
@@ -135,7 +135,7 @@ const ReferralsPage = () => {
 					/>
 					<button
 						onClick={() => setDoShare(true)}
-						className="p-2 bg-green-500 text-white rounded-md active:scale-95 transition-transform">
+						className="p-2 bg-green-600 text-white rounded-md active:scale-95 transition-transform">
 						Invite friends
 					</button>
 					{doShare && (

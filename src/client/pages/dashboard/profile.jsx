@@ -16,26 +16,28 @@ const ProfilePage = () => {
 	const [allowEditWallet, setAllowEditWallet] = useState(false);
 
 	return (
-		<main className="flex flex-col gap-4 z-[9999] relative flex-1 overflow-x-hidden p-4 text-green-500">
-			<h1 className="font-black text-2xl">Profile</h1>
+		<main className="flex flex-col gap-4 z-[9999] relative flex-1 overflow-x-hidden p-4">
+			<h1 className="font-black text-2xl text-green-600">Profile</h1>
 			<div className="space-y-3">
 				<div className="space-y-3">
-					<h2 className="text-lg font-bold">Personal Information</h2>
+					<h2 className="text-lg font-bold text-zinc-500">
+						Personal Information
+					</h2>
 					<div className="space-y-2">
 						<div>
-							<h3>
+							<h3 className="text-zinc-600">
 								<b>Username</b>
 							</h3>
 							<p>{username || "No username"}</p>
 						</div>
 						<div>
-							<h3>
+							<h3 className="text-zinc-600">
 								<b>Telegram ID</b>
 							</h3>
 							<p>{telegramId}</p>
 						</div>
 						<div>
-							<h3>
+							<h3 className="text-zinc-600">
 								<b>Referral link</b>
 							</h3>
 							<p
@@ -60,10 +62,12 @@ const ProfilePage = () => {
 				</div>
 				<hr />
 				<div className="space-y-3">
-					<h2 className="text-lg font-bold">Wallet Information</h2>
+					<h2 className="text-lg font-bold text-zinc-500">
+						Wallet Information
+					</h2>
 					<div className="space-y-2">
 						<div>
-							<h3>
+							<h3 className="text-zinc-600">
 								<b>Wallet address</b>
 							</h3>
 							<p contentEditable={allowEditWallet}>
@@ -91,7 +95,7 @@ const ProfilePage = () => {
 							</div>
 						</div>
 						<div>
-							<h3>
+							<h3 className="text-zinc-600">
 								<b>$Emerald balance</b>
 							</h3>
 							<p>{balance.toLocaleString()}$EMD</p>
@@ -100,16 +104,18 @@ const ProfilePage = () => {
 				</div>
 				<hr />
 				<div className="space-y-3">
-					<h2 className="text-lg font-bold">Referral statistics</h2>
+					<h2 className="text-lg font-bold text-zinc-500">
+						Referral statistics
+					</h2>
 					<div className="space-y-2">
 						<div>
-							<h3>
+							<h3 className="text-zinc-600">
 								<b>Total referrals</b>
 							</h3>
 							<p>{totalReferrals}</p>
 						</div>
 						<div>
-							<h3>
+							<h3 className="text-zinc-600">
 								<b>Date joined</b>
 							</h3>
 							<p>{new Date(dateJoined).toDateString()}</p>

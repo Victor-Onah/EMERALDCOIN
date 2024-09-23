@@ -82,10 +82,12 @@ const Dashboard = () => {
 
 	return (
 		<>
-			<main className="flex flex-col gap-4 text-black z-[9999] relative flex-1">
-				<section className="py-4 text-center text-green-500">
-					<span className="text-xl font-bold">{balance} $EMD</span>
-					<span className="flex items-center justify-center gap-1 font-semibold">
+			<main className="flex flex-col gap-4 z-[9999] relative flex-1">
+				<section className="py-4 text-center">
+					<span className="text-xl font-bold text-green-600">
+						{balance} $EMD
+					</span>
+					<span className="flex items-center justify-center gap-1 font-semibold text-zinc-400">
 						<GiMiner />
 						{MINING_RATE_PER_HOUR.toLocaleString()} $EMD/Hr
 					</span>
