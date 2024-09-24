@@ -20,7 +20,7 @@ const ProfilePage = () => {
 			<h1 className="font-black text-2xl text-green-600">Profile</h1>
 			<div className="space-y-3">
 				<div className="space-y-3">
-					<h2 className="text-lg font-bold text-green-400">
+					<h2 className="text-lg font-bold text-green-500">
 						Personal Information
 					</h2>
 					<div className="space-y-2">
@@ -62,7 +62,7 @@ const ProfilePage = () => {
 				</div>
 				<hr />
 				<div className="space-y-3">
-					<h2 className="text-lg font-bold text-green-400">
+					<h2 className="text-lg font-bold text-green-500">
 						Wallet Information
 					</h2>
 					<div className="space-y-2">
@@ -104,7 +104,7 @@ const ProfilePage = () => {
 				</div>
 				<hr />
 				<div className="space-y-3">
-					<h2 className="text-lg font-bold text-green-400">
+					<h2 className="text-lg font-bold text-green-500">
 						Referral statistics
 					</h2>
 					<div className="space-y-2">
