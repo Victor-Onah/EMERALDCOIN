@@ -24,17 +24,14 @@ const ReferralsPage = () => {
 	};
 
 	const shareLink = async () => {
-		const toastId = toast.loading("Please wait");
 		try {
-			await navigator.share({
+			await window.navigator.share({
 				text: `Join me in mining $Emerald.\nI've mined ${balance} $EMD already.`,
 				title: "$Emerald Coin",
 				url: `https://t.me/emeraldcoin_miner_bot?start=${referralCode}`
 			});
 		} catch {
 			toast.error("Failed to share!");
-		} finally {
-			toast.dismiss(toastId);
 		}
 	};
 
