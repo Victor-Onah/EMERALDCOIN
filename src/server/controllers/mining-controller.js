@@ -13,7 +13,7 @@ export default class MiningController {
 	// start new mining session
 	static async startNewMiningSession(id) {
 		const isMining = await MiningController.isMining(id);
-		const fourHoursTime = 60_000 * 60 * 4;
+		const fourHoursTime = new Date(Date.now() + 60_000 * 60 * 4);
 
 		if (isMining) return false;
 
