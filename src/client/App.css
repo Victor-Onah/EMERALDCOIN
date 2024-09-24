@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 @font-face {
-	font-family: GeistMonoVF;
-	src: url("./assets/fonts/GeistMonoVF.woff") format(woff);
+	font-family: NunitoSans;
+	src: url("./assets/fonts/nunito_sans.ttf") format(truetype);
 }
 
 * {
-	font-family: GeistMonoVF, "Courier New", Courier, monospace !important;
+	font-family: NunitoSans, Helvetica, sans-serifp !important;
 }
 
 body {
