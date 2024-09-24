@@ -111,7 +111,7 @@ const DashboardLayout = () => {
 				setAppLoadState("failed");
 			}
 		} else {
-			// setAppLoadState("failed");
+			setAppLoadState("failed");
 		}
 	};
 

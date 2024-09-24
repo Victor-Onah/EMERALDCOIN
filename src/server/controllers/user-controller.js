@@ -196,7 +196,9 @@ export default class UserController {
 				if (miningSession.status === "completed")
 					balance += ratePerHour * 4;
 				else {
-					const timeDone = (Date.now() - startTime) / 1000; // convert to seconds
+					const timeDone = Math.floor(
+						(Date.now() - startTime) / 1000
+					); // convert to seconds
 
 					balance += timeDone * ratePerSecond;
 				}
